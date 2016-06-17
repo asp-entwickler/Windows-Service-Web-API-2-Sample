@@ -12,14 +12,23 @@ namespace Windows_Service_Web_API_2_Sample
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main()
+        static void Main(string[] args)
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
+            if (Environment.UserInteractive)
             {
-                new WinServiceWebApi()
-            };
-            ServiceBase.Run(ServicesToRun);
+
+                Console.ReadLine();
+
+                WinServiceWebApi service1 = new WinServiceWebApi(args);
+                service1.TestStartupAndStop(args);
+            }
+            else
+            {
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[] { new WinServiceWebApi(args) };
+                ServiceBase.Run(ServicesToRun);
+            }
+
         }
     }
 }

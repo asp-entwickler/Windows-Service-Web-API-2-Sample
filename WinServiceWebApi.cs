@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Cors;
+using System.Web.Http.SelfHost;
 
 namespace Windows_Service_Web_API_2_Sample
 {
@@ -20,8 +18,16 @@ namespace Windows_Service_Web_API_2_Sample
 
         internal static string EventSourceName = "WinServiceWebApi_EventSource";
         internal string LogName = "Win Service Web API2";
+        private System.Web.Http.SelfHost.HttpSelfHostServer WebApiSelfHostedSampleServer;
 
-        public WinServiceWebApi()
+        [Conditional("DEBUG")]
+        private static void DebugMode()
+        {
+            Debugger.Break();
+        }
+
+
+        public WinServiceWebApi(string[] args)
         {
             InitializeComponent();
 
@@ -54,12 +60,14 @@ namespace Windows_Service_Web_API_2_Sample
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
 
+            ConfigAndRunWebAPI();
 
         }
 
         protected override void OnStop()
         {
             eventLog.WriteEntry("Win Service Web API2 - Stopped");
+            WebApiSelfHostedSampleServer.CloseAsync().Wait();
         }
 
         public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
@@ -75,6 +83,35 @@ namespace Windows_Service_Web_API_2_Sample
             this.OnStop();
         }
 
+        internal void ConfigAndRunWebAPI()
+        {
+
+            var serviceUrl = ConfigurationManager.AppSettings["WinServiceWebAPIUrl"];
+            HttpSelfHostConfiguration config = new HttpSelfHostConfiguration(serviceUrl);
+            config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpRoute(
+              name: "DefaultApi",
+              routeTemplate: "{controller}/{id}",
+              defaults: new { id = RouteParameter.Optional }
+            );
+
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
+
+            WebApiSelfHostedSampleServer = new HttpSelfHostServer(config);
+
+            try
+            {
+                WebApiSelfHostedSampleServer.OpenAsync().Wait();
+                EventLog.WriteEntry("Print Service Web API Started");
+            }
+            catch (Exception ex)
+            {
+
+                EventLog.WriteEntry("Web API Server Service start FAIL:: " + Environment.NewLine + "Exception: " + Environment.NewLine + ex.ToString() + Environment.NewLine + " Inner Exception: " + ex.InnerException.ToString(), EventLogEntryType.Error);
+
+            }
+        }
 
     }
 }
