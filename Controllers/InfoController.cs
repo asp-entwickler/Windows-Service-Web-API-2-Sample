@@ -12,19 +12,15 @@ namespace Windows_Service_Web_API_2_Sample.Controllers
             return "Windows Web API Sample Service On-Line (responced GET Method)";
         }
 
-        public string Get(string param)
+        public string Get(string controllerParam)
         {
-            return "Windows Web API Sample Service On-Line (responced GET Method). Parameter = " + param;
+            return "Windows Web API Sample Service On-Line (responced GET Method). Parameter = " + controllerParam;
         }
 
-        public string Post()
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public string Post([FromBody] dynamic controllerParam)
         {
-            return "Windows Web API Sample Service On-Line (responced POST Method)";
-        }
-
-        public string Post(string param)
-        {
-            return "Windows Web API Sample Service On-Line (responced POST Method). Parameter = " + param;
+            return "Windows Web API Sample Service On-Line (responced POST Method). Parameter = " + controllerParam.ToString();
         }
 
     }
