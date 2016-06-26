@@ -78,6 +78,7 @@ namespace Windows_Service_Web_API_2_Sample
 
         internal void TestStartupAndStop(string[] args)
         {
+            Console.WriteLine("Click Enter to close programm ...");
             this.OnStart(args);
             Console.ReadLine();
             this.OnStop();

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Windows_Service_Web_API_2_Sample
 {
@@ -16,9 +12,6 @@ namespace Windows_Service_Web_API_2_Sample
         {
             if (Environment.UserInteractive)
             {
-
-                Console.ReadLine();
-
                 WinServiceWebApi service1 = new WinServiceWebApi(args);
                 service1.TestStartupAndStop(args);
             }

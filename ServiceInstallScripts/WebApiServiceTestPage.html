@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
  <head>
     <title>Web API Win Service Test Page</title>
@@ -7,19 +7,13 @@
     <script>
 	
 		function CallInfoGET(){
-			var prm = $("#controllerParam").val().toString();
+		    var prm = $("#controllerParam").val().toString();
 			var qGetParam = "";
 			var qPostParam = "";
 			
 			var httpMethod = $('#selectMethod').val();
 			if(httpMethod == 'GET') {
-				qGetParam = prm == "" ? "" : "?param=" + prm.toString();
-				qPostParam = "";
-				
-			} else {  
-			//POST
-				qPostParam = prm == "" ? "" : "{controllerParam:'" + prm.toString() + "'}";
-				qGetParam = "";
+			    qGetParam = "?controllerParam=" + prm.toString();
 			}
 			
 			$.ajax({
@@ -27,8 +21,7 @@
 			  url: "http://localhost:4040/Info" + qGetParam,
 			  contentType: "application/json; charset=utf-8",
 			  dataType: "json",
-			  data: "{controllerParam: '"+prm+"'}",
-			  //data: qPostParam,
+			  data: prm,
 			  processData: "false",
 			  success:function(resp){
 				
@@ -37,8 +30,7 @@
 			  }
 			});   
 		}
-	
-	
+
 	</script>
  </head>
  <body>
@@ -58,14 +50,14 @@
 	<br />
 	<br />
 	Parameter
-	<input type='text' id=controllerParam></input>
+	<input type='text' id=controllerParam />
 	<br />
 	<br />
-	<input type='button' value='Call  >>  "localhost:4040/Info"    controller with parapeter' onclick=CallInfoGET()></input>
+	<input type='button' value='Call  >>  "localhost:4040/Info"    controller with parapeter' onclick=CallInfoGET() />
 	<br />
 	<ol id='responceList'>
 		<li>Placeholder for responce list</li>
-	<ol>
+	</ol>
  
  </body>
 </html>
